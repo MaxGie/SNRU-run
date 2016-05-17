@@ -14,7 +14,7 @@ public class SignUp extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton choice1radioButton, choice2radioButton, choice3radioButton,
             choice4radioButton, choice5radioButton;
-    private String nameString, userString, passwordString, avataString;
+    private String nameString, userString, passwordString, avataString = "0";
 
 
     @Override
@@ -25,8 +25,37 @@ public class SignUp extends AppCompatActivity {
         //Bind Widget
         bindWidget();
 
+        //Radio Button Controller
+        radioButtonController();
+
 
     }//Main Method
+
+    private void radioButtonController() {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int i) {
+
+                switch (i) {
+                    case R.id.radioButton:
+                        avataString = "0";
+                        break;
+                    case R.id.radioButton2:
+                        avataString = "1";
+                        break;
+                    case R.id.radioButton3:
+                        avataString = "2";
+                        break;
+                    case R.id.radioButton4:
+                        avataString = "3";
+                        break;
+                    case R.id.radioButton5:
+                        avataString = "4";
+                        break;
+                }
+            }
+        });
+    }
 
     private void bindWidget() {
         nameEditText = (EditText) findViewById(R.id.editText);
@@ -49,10 +78,10 @@ public class SignUp extends AppCompatActivity {
         passwordString = passwordEditText.getText().toString().trim();
 
         //Check Space
-        if (nameString.equals("") ||userString.equals("") ||passwordString.equals("") ) {
+        if (nameString.equals("") || userString.equals("") || passwordString.equals("")) {
 
             MyAlert myAlert = new MyAlert();
-            myAlert.myDialog(this,"มีช่องว่าง", "กรุณากรอกทุกช่องด้วยนะครับ");
+            myAlert.myDialog(this, "มีช่องว่าง", "กรุณากรอกทุกช่องด้วยนะครับ");
 
         } else {
 
