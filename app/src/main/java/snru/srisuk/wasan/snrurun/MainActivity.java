@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         myManage = new MyManage(MainActivity.this);
-
+//max
         //Test Add user
        // myManage.addUser("วสันต์ ศรีสุข", "wasan", "12345", "2");
 
