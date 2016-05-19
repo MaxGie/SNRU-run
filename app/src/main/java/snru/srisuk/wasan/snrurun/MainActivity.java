@@ -1,6 +1,7 @@
 package snru.srisuk.wasan.snrurun;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -24,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private MyManage myManage;
     private ImageView imageView;
     private EditText userEditText, passwordEditText;
-    private  String userString, passwordString;
+    private String userString, passwordString;
+    private String[] userStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
        // myManage.addUser("วสันต์ ศรีสุข", "wasan", "12345", "2");
 
         //Delete All SQLite
-        DeleteAllSQLite();
+        databaseList();
 
         //Synchronize
         MySynchronize mySynchronize = new MySynchronize();
@@ -56,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 .into(imageView);
 
     }//Main Method
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        databaseList();
+        MySynchronize mySynchronize = new MySynchronize();
+        mySynchronize.execute();
+    }
 
     public void clickSignIn(View view) {
 
@@ -72,11 +84,51 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
 
-
+            checkUser();
 
         }
 
     }//Sign Up
+
+    private void checkUser() {
+
+        try {
+
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name,
+                    MODE_PRIVATE, null);
+
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERE User = " + "'" +userString+"'", null);
+            cursor.moveToFirst();
+            userStrings = new String[cursor.getColumnCount()];
+            for (int i=0;i<cursor.getColumnCount();i++) {
+                userStrings[i] = cursor.getString(i);
+            }
+
+            //Checkpassword
+
+            if (passwordString.equals(userStrings[3])) {
+                Toast.makeText(this, "ยินดีต้อนรับ" + userStrings[1], Toast.LENGTH_SHORT).show();
+
+
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.putExtra("User", userStrings);
+                startActivity(intent);
+                finish();
+
+            } else {
+
+                MyAlert myAlert = new MyAlert();
+                myAlert.myDialog(this, "Password False", "Please Try Again Password False");
+            }
+
+        } catch (Exception e) {
+
+            MyAlert myAlert = new MyAlert();
+            myAlert.myDialog(this, "ไม่มี User นี้", "ไม่มี  " + userString + "  ในฐานข้อมูลของเรา");
+
+        }
+
+    }//CheckUser
 
     //Create Inner Class
 
